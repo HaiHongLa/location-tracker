@@ -1,0 +1,29 @@
+#homePage .form-control {
+  height: 200px;
+}
+.addressContainer {
+  margin-top: 30px;
+}
+
+.homepageBtn {
+  margin-top: 20px;
+  font-size: 40px;
+  font-weight: 800;
+  border-radius: 10px;
+  padding: 20px;
+  width: 60%;
+  color: #1207ad;
+}
+
+.homepageIcon {
+  font-size: 80px;
+}
+
+.homepageLabel {
+  font-size: 20px;
+  font-weight: 400;
+}
+
+.welcomeHeader {
+  padding-bottom: 20px;
+}
