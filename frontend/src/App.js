@@ -57,7 +57,6 @@ function App() {
         `${process.env.REACT_APP_BACKEND_URL}/api/users/getLocations/${userId}`
       );
       const data = await response.json();
-      console.log(data);
       if (data.locations) {
         setLocations(data.locations);
       }
@@ -74,12 +73,10 @@ function App() {
     fetchLocs();
   }, [userId, fetchLocs]);
 
-  const updateLocHandler = async (newLoc) => {
-    setCenter(newLoc);
-    if (locations[0]) {
-      locations[0].loc.lat = newLoc.lat;
-      locations[0].loc.lng = newLoc.lng;
-      setLocations(locations);
+  const updateLocHandler = (res) => {
+    if (res.locations) {
+      setCenter(res.locations[0].loc);
+      setLocations([...res.locations]);
     }
   };
 

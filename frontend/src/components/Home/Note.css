@@ -1,0 +1,23 @@
+#noteForm {
+  padding: 6vh;
+  background-color: antiquewhite;
+  margin-top: 4vh;
+  text-align: left;
+  border-radius: 3vh;
+}
+
+#noteForm label {
+  font-size: 4vh;
+  font-weight: 600;
+}
+
+#noteForm .text-input {
+  height: 9vh;
+}
+
+#noteForm .noteBtn {
+  align-items: left;
+  font-size: 35px;
+  width: 12vh;
+  height: 12vh;
+}

@@ -2,8 +2,10 @@ import { useContext, useState } from "react";
 import { AuthContext } from "../../context/auth-context";
 import { useHttpClient } from "../../hooks/http-hook";
 import "./Home.css";
+import Note from "./Note";
 
 const Home = (props) => {
+  const [showNoteForm, setShowNoteForm] = useState(false);
   const [addresses, setAddresses] = useState([]);
   const [loc, setLoc] = useState();
   const { sendRequest } = useHttpClient();
@@ -13,7 +15,7 @@ const Home = (props) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(async (position) => {
         const addr = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API}`
+          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${position.coords.latitude},${position.coords.longitude}&key=${process.env.REACT_APP_GOOGLE_MAPS_API_KEY}`
         )
           .then((response) => response.json())
           .then((data) => {
@@ -26,7 +28,6 @@ const Home = (props) => {
           address: null,
         };
         setLoc(location);
-        console.log(addr.results);
         setAddresses(addr.results);
       });
     }
@@ -48,13 +49,18 @@ const Home = (props) => {
           "Content-Type": "application/json",
         }
       );
-      alert(response.message);
+      props.onUpdateLoc(response);
       setAddresses([]);
 
       props.onUpdateLoc({ lat: loc.lat, lng: loc.lng });
     } catch (err) {
       alert(err.message);
     }
+  };
+
+  const addNoteHandler = (event) => {
+    event.preventDefault();
+    setShowNoteForm(true);
   };
 
   const auth = useContext(AuthContext);
@@ -74,7 +80,11 @@ const Home = (props) => {
           </button>
         </div>
         <div className="col-lg-6">
-          <button type="button" class="btn btn-outline-primary homepageBtn">
+          <button
+            type="button"
+            class="btn btn-outline-primary homepageBtn"
+            onClick={addNoteHandler}
+          >
             <i class="homepageIcon fas fa-comment-alt"></i>
             <br />
             <span className="homepageLabel">Write a note</span>
@@ -100,6 +110,7 @@ const Home = (props) => {
           </div>
         </div>
       )}
+      {showNoteForm && <Note />}
     </div>
   );
 };

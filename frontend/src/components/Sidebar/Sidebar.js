@@ -51,7 +51,7 @@ const Sidebar = (props) => {
         {!auth.isLoggedIn && (
           <header>
             <a href="/">
-              <i class="fas fa-globe-americas"></i> MapApp
+              <i class="fas fa-globe-americas"></i> Geocode
             </a>
           </header>
         )}
@@ -59,7 +59,7 @@ const Sidebar = (props) => {
           <ul class="nav navbar-expand-lg justify-content-center">
             <li className="navbar-brand">
               <a href="/" className="navbar-brand">
-                <i class="fas fa-globe-americas"></i> MapApp
+                <i class="fas fa-globe-americas"></i>Geocode
               </a>
             </li>
             <li class="nav-item">
