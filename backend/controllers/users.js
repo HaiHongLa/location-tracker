@@ -5,6 +5,9 @@ const jwt = require("jsonwebtoken");
 const { validationResult } = require("express-validator");
 const User = require("../models/user");
 
+/**
+ * Initiate a new user
+ */
 exports.signup = async (req, res, next) => {
   if (!validationResult(req).isEmpty()) {
     return next(
@@ -77,6 +80,9 @@ exports.signup = async (req, res, next) => {
   });
 };
 
+/**
+ * Logs the user in
+ */
 exports.login = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -133,6 +139,9 @@ exports.login = async (req, res, next) => {
   });
 };
 
+/**
+ * Add the user ID to the friend's friend requests list
+ */
 exports.sendFriendRequest = async (req, res, next) => {
   const { uid, email } = req.body;
   let user;
@@ -185,6 +194,9 @@ exports.sendFriendRequest = async (req, res, next) => {
   }
 };
 
+/**
+ * Returns user's data based on ID
+ */
 exports.findUserById = async (req, res, next) => {
   const uid = req.params.uid;
   let user;
@@ -206,6 +218,9 @@ exports.findUserById = async (req, res, next) => {
   });
 };
 
+/**
+ * Returns all friend information in the user's friend request list except passwords
+ */
 exports.getUserFriendRequests = async (req, res, next) => {
   const uid = req.params.uid;
   let user;
@@ -235,6 +250,9 @@ exports.getUserFriendRequests = async (req, res, next) => {
   res.status(201).json({ friendRequests: friendRequests });
 };
 
+/**
+ * Add a user ID to the user's friends list
+ */
 exports.acceptFriendRequest = async (req, res, next) => {
   const { uid, friendId } = req.body;
   let user;
@@ -271,6 +289,9 @@ exports.acceptFriendRequest = async (req, res, next) => {
   });
 };
 
+/**
+ * Remove a user ID from the user's friend request list
+ */
 exports.denyFriendRequest = async (req, res, next) => {
   const { uid, friendId } = req.body;
   let user;
@@ -303,6 +324,9 @@ exports.denyFriendRequest = async (req, res, next) => {
   res.status(201).json({ message: "Deny request successful" });
 };
 
+/**
+ * Remove a friend from the user's friends list
+ */
 exports.unfriend = async (req, res, next) => {
   const { uid, friendId } = req.body;
   let user;
@@ -341,6 +365,9 @@ exports.unfriend = async (req, res, next) => {
     .json({ message: "You and " + friend.name + " are no longer friends" });
 };
 
+/**
+ * Takes in user's lat, lng, and address and returns a new list of locations
+ */
 exports.updateLocation = async (req, res, next) => {
   const { uid, lng, lat, address, createdAt } = req.body;
   const newLoc = {
@@ -352,7 +379,7 @@ exports.updateLocation = async (req, res, next) => {
   let user;
 
   try {
-    user = await User.findById(uid);
+    user = await User.findById(uid).populate("friends", "name email location");
   } catch (err) {
     console.log(err.message);
     return next(new HttpError("Error finding user", 500));
@@ -361,6 +388,7 @@ exports.updateLocation = async (req, res, next) => {
   if (!user) {
     return next(new HttpError("Cannot find user", 500));
   }
+
   try {
     const sess = await mongoose.startSession();
     sess.startTransaction();
@@ -371,9 +399,27 @@ exports.updateLocation = async (req, res, next) => {
     console.log(err);
     return next(new HttpError("Update location failed", 500));
   }
-  res.status(201).json({ message: "Update location successful" });
+
+  let locations = [
+    { name: user.name, loc: user.location[user.location.length - 1] },
+  ];
+  for (let index = 0; index < user.friends.length; index++) {
+    const friend = user.friends[index];
+    const locData = {
+      name: friend.name,
+      loc: friend.location[friend.location.length - 1],
+    };
+    locations.push(locData);
+  }
+
+  res
+    .status(201)
+    .json({ message: "Update location successful", locations: locations });
 };
 
+/**
+ * Returns everything about the user except the passwords
+ */
 exports.getUserData = async (req, res, next) => {
   const uid = req.params.uid;
   let user;
@@ -413,6 +459,9 @@ exports.getUserData = async (req, res, next) => {
   res.status(201).json({ message: "Sucess", userData: userData });
 };
 
+/**
+ * Return the user's and the user's friends' locations based on user ID and their friends's ID
+ */
 exports.getLocations = async (req, res, next) => {
   const uid = req.params.uid;
   let user;
