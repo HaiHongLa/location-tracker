@@ -50,6 +50,7 @@ exports.signup = async (req, res, next) => {
     friends: [],
     friendRequests: [],
     location: [],
+    notes: [],
   });
 
   try {

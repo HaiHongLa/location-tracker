@@ -11,12 +11,21 @@ const userSchema = new Schema({
   friendRequests: [
     { type: mongoose.Types.ObjectId, required: true, ref: "User" },
   ],
-  location: [{
-    address: { type: String },
-    lat: { type: Number },
-    lng: { type: Number },
-    createdAt: { type: Date },
-  }],
+  location: [
+    {
+      address: { type: String },
+      lat: { type: Number },
+      lng: { type: Number },
+      createdAt: { type: Date },
+    },
+  ],
+  notes: [
+    {
+      title: { type: String, required: true },
+      address: { type: String, required: true },
+      content: { type: String, required: true },
+    },
+  ],
 });
 
 userSchema.plugin(uniqueValidator);
